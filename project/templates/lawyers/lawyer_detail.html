@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}  <!-- Подключаем наш фильтр -->
+
+{% block head %}
+    <title>{{ lawyer.name }} - Отзывы</title>
+    <style>
+        /* Ваши стили (оставляем без изменений) */
+        .lawyer-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .lawyer-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 2px solid #ddd;
+        }
+
+        .lawyer-info {
+            flex: 1;
+        }
+
+        .lawyer-info h2 {
+            color: #1f6e68;
+            margin-bottom: 10px;
+        }
+
+        .lawyer-info p {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .review-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .review-user {
+            font-weight: bold;
+            color: #1f6e68;
+        }
+
+        .review-date {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .review-text {
+            color: #333;
+        }
+
+        .review-score {
+            color: #1f6e68;
+            font-weight: bold;
+        }
+
+        .review-form {
+            margin-top: 20px;
+        }
+
+        .review-form textarea, .review-form input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .review-form button {
+            background-color: #1f6e68;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .review-form button:hover {
+            background-color: #1a5a55;
+        }
+
+        /* Стили для сортировки */
+        .sort-links {
+            margin-bottom: 20px;
+        }
+
+        .sort-links a {
+            color: #1f6e68;
+            text-decoration: none;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .sort-links a:hover {
+            text-decoration: underline;
+        }
+
+        .sort-links a.active {
+            color: #1a5a55;
+            text-decoration: underline;
+        }
+
+        /* Стили для фильтрации */
+        .filter-links {
+            margin-bottom: 20px;
+        }
+
+        .filter-links a {
+            color: #1f6e68;
+            text-decoration: none;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .filter-links a:hover {
+            text-decoration: underline;
+        }
+
+        .filter-links a.active {
+            color: #1a5a55;
+            text-decoration: underline;
+        }
+
+        /* Стили для звездочек */
+        .stars {
+            color: #ffd700; /* Золотой цвет для звезд */
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+
+        .stars .half-star {
+            position: relative;
+            display: inline-block;
+        }
+
+        .stars .half-star::before {
+            content: '⭐';
+            position: absolute;
+            left: 0;
+            width: 50%;
+            overflow: hidden;
+            color: #ffd700;
+        }
+
+        .stars .half-star::after {
+            content: '☆';
+            position: absolute;
+            right: 0;
+            width: 50%;
+            overflow: hidden;
+            color: #ddd;
+        }
+
+        /* Стили для кнопок действий */
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            background-color: #1f6e68;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .btn-edit:hover {
+            background-color: #1a5a55;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        /* Стили для хлебных крошек */
+        .breadcrumb {
+            background-color: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    
+        .breadcrumb a {
+            color: #1f6e68;
+            text-decoration: none;
+        }
+
+    </style>
+{% endblock head %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'home' %}"><strong>Главная</strong></a></li>
+        <li><a href="{% url 'lawyers:lawyer_list' %}">Список юристов</a></li>
+        <li class="active">{{ lawyer.name }}</li>
+    </ol>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <div class="lawyer-card">
+        <div style="display: flex; align-items: center;">
+            {% if lawyer.photo %}
+                <img src="{{ lawyer.photo.url }}" alt="{{ lawyer.name }}" class="lawyer-photo">
+            {% else %}
+                <img src="{% static 'profile_images/anonymous-user.png' %}" alt="Анонимный профиль" class="lawyer-photo">
+            {% endif %}
+            <div class="lawyer-info">
+                <h2>{{ lawyer.name }}</h2>
+                <p><strong>Специализация:</strong> {{ lawyer.specialization }}</p>
+                <p><strong>Опыт:</strong> {{ lawyer.experience }} лет</p>
+                <p><strong>Телефон:</strong> {{ lawyer.phone|default:"Не указан" }}</p>  <!-- Новое поле -->
+                <p><strong>Электронная почта:</strong> {{ lawyer.email|default:"Не указана" }}</p>  <!-- Новое поле -->
+                <p><strong>Средняя оценка:</strong>
+                    {% if lawyer.average_rating %}
+                        {{ lawyer.average_rating|floatformat:1 }} / 5.0
+                    {% else %}
+                        Нет оценок
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Отзывы -->
+    <h3>Отзывы</h3>
+
+    <!-- Кнопки для фильтрации отзывов -->
+    <div class="filter-links">
+        <span>Фильтровать отзывы:</span>
+        <a href="?filter=all" class="{% if filter_by != 'my_reviews' %}active{% endif %}">Все отзывы</a>
+        {% if user.is_authenticated %}
+            <a href="?filter=my_reviews" class="{% if filter_by == 'my_reviews' %}active{% endif %}">Мои отзывы</a>
+        {% endif %}
+    </div>
+
+    <!-- Ссылки для сортировки -->
+    <div class="sort-links">
+        <span>Сортировать по оценке:</span>
+        <a href="?sort=score_asc" class="{% if sort_by == 'score_asc' %}active{% endif %}">По возрастанию</a>
+        <a href="?sort=score_desc" class="{% if sort_by == 'score_desc' %}active{% endif %}">По убыванию</a>
+        <a href="?sort=-created_at" class="{% if sort_by == '-created_at' %}active{% endif %}">По дате (новые сначала)</a>
+    </div>
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-user">{{ review.user.username }}</span>
+                    <span class="review-date">{{ review.created_at|date:"d.m.Y H:i" }}</span>
+                    {% if review.user == request.user %}
+                        <div class="review-actions">
+                            <a href="{% url 'lawyers:edit_review' review.id %}" class="btn-edit">Редактировать</a>
+                            <a href="{% url 'lawyers:confirm_delete_review' review.id %}" class="btn-delete">Удалить</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="review-score">
+                    Оценка: {{ review.score }} / 5
+                    <div class="stars">
+                        {{ review.score|stars }}  <!-- Используем наш фильтр -->
+                    </div>
+                </div>
+                <div class="review-text">
+                    {{ review.text|default:"Без текста" }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Пока нет отзывов.</p>
+    {% endif %}
+
+    <!-- Форма для добавления отзыва -->
+    {% if user.is_authenticated %}
+        {% if user_has_reviewed %}
+            <div class="review-form">
+                <p style="color: #1f6e68; font-weight: bold; margin-bottom: 20px;">Вы уже оставили отзыв.</p>
+            </div>
+        {% else %}
+            <div class="review-form">
+                <h3>Оставить отзыв</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <!-- Выпадающий список для оценки -->
+                    <div class="form-group">
+                        <label for="score">Оценка:</label>
+                        <select name="score" id="score" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <!-- Поле для текста отзыва -->
+                    <div class="form-group">
+                        <label for="id_text">Текст отзыва:</label>
+                        {{ form.text }}
+                    </div>
+                    <!-- Кнопка отправки -->
+                    <button type="submit" class="btn-custom">Отправить</button>
+                </form>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Чтобы оставить отзыв, <a href="{% url 'login' %}">войдите</a> в систему.</p>
+    {% endif %}
+{% endblock content %}

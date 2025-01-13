@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    <title>{{ view.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/list_style.css' %}">
+{% endblock head %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'home' %}"><strong>Главная</strong></a></li>
+        <li class="active">{{ view.title }}</li>
+    </ol>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <h1 style="color: #1f6e68;">{{ view.title }}</h1>
+
+    <!-- Сворачиваемая панель поиска -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#searchPanel" aria-expanded="false" aria-controls="searchPanel" style="display: block; width: 100%; cursor: pointer;">
+                    Поиск
+                    <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                </a>
+            </h4>
+        </div>
+        <div id="searchPanel" class="panel-collapse collapse">
+            <div class="panel-body">
+                <form method="get" class="search-form">
+                    {{ filter.form|crispy }}
+                    <input type="submit" class="btn btn-success" value="Поиск"/>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if object_list %}
+    <!-- Таблица с судебными приказами -->
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Номер</th><br>
+                        <th>Истец</th>
+                        <th>Ответчик</th>
+                        <th>Статус</th>
+                        <th class="action-column">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                        <tr data-key="{{ object.id }}">
+                            <td>{{ object.date }}</td>
+                            <td>{{ object.number }}</td>
+                            <td>{{ object.claimant }}</td>
+                            <td>{{ object.defendant }}</td>
+                            <td>{{ object.status }}</td>
+                            <td>
+                                <a href="{% url 'court-order-detail' object.id %}" title="Просмотр" aria-label="Просмотр" class="btn btn-success btn-sm">
+                                    <span class="glyphicon glyphicon-eye-open"></span> Просмотр
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    {% include 'includes/paginator.html' %}
+
+    {% else %}
+        <!-- Сообщение, если не найдено судебных приказов -->
+        <div class="alert alert-warning">
+            <h4>Судебные приказы не найдены</h4>
+            <p>Для вашего профиля нет судебных приказов, либо они ещё не зарегистрированы в системе.</p>
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -1,4 +1,4 @@
-#!/home/david/Dev/diplom/venv/bin/python3.12
+#!/home/tima9k/Dev/less/venv/bin/python3.9
 # -*- coding: utf-8 -*-
 import re
 import sys

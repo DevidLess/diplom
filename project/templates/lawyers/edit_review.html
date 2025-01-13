@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Редактировать отзыв</title>
+    <style>
+        /* Общие стили для формы */
+        .review-form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-form h3 {
+            color: #1f6e68;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Стили для полей формы */
+        .review-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #1f6e68;
+            font-weight: bold;
+        }
+
+        .review-form input,
+        .review-form textarea,
+        .review-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            color: #555;
+        }
+
+        .review-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Стили для кнопок */
+        .btn-custom {
+            background-color: #1f6e68;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #1a5a55;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
+        /* Стили для ошибок формы */
+        .review-form .errorlist {
+            color: #dc3545;
+            margin-bottom: 15px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .review-form .errorlist li {
+            margin-bottom: 5px;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+    <div class="review-form">
+        <h3>Редактировать отзыв</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-custom">Сохранить</button>
+            <a href="{% url 'lawyers:lawyer_detail' review.lawyer.id %}" class="btn-cancel">Отмена</a>
+        </form>
+    </div>
+{% endblock content %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Государственные органы</title>
+    <style>
+        /* Стили для карточек */
+        .resource-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #f9f9f9;
+            border: 2px solid #1f6e68;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .resource-title {
+            font-size: 2rem; /* Увеличенный шрифт для заголовка */
+            font-weight: bold;
+            color: #1f6e68;
+            margin-bottom: 15px;
+        }
+
+        .resource-description {
+            font-size: 1,8rem;
+            margin-bottom: 20px;
+        }
+
+        .resource-link {
+            align-self: flex-start;
+            text-decoration: none;
+            color: white;
+            background-color: #1f6e68;
+            font-size: 1,8rem; /* Увеличенный шрифт для кнопки */
+            padding: 12px 18px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .resource-link:hover {
+            background-color: #444444;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .alert-warning h4 {
+            color: #856404;
+        }
+    </style>
+{% endblock head %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'home' %}"><strong>Главная</strong></a></li>
+        <li class="active">Государственные органы</li>
+    </ol>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <h1 style="color: #1f6e68">Государственные органы</h1>
+
+    <!-- Список государственных ресурсов -->
+    {% if resources %}
+        <div class="resource-list">
+            {% for resource in resources %}
+                <div class="resource-card">
+                    <div class="resource-title">{{ resource.name }}</div>
+                    <div class="resource-description">{{ resource.description }}</div>
+                    <a href="{{ resource.url }}" class="resource-link" target="_blank">
+                        Перейти на сайт
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        {% include 'includes/paginator.html' %}
+    {% else %}
+        <!-- Сообщение, если список ресурсов пуст -->
+        <div class="alert alert-warning">
+            <h4>Ресурсы не найдены</h4>
+            <p>На данный момент нет зарегистрированных ресурсов в системе.</p>
+        </div>
+    {% endif %}
+{% endblock content %}

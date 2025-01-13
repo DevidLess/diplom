@@ -1,0 +1,6 @@
+
+3996 Разработка веб-приложения для автоматизированного формирования юридических документов
+
+C:\Python\Python38\python.exe C:\Projects\3996\project\manage.py runserver 0.0.0.0:7777 --insecure
+C:\Python\Python38\python.exe C:\Projects\3996\project\manage.py runserver 0.0.0.0:80 --insecure
+C:\Python\Python38\python.exe C:\Projects\3996\project\manage.py runserver 0.0.0.0:13996 --insecure

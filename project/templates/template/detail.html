@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>{{ object.title }}</title>
+    <style>
+        /* Общий стиль для таблиц */
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            background-color: #fff;
+        }
+        .table th {
+            background-color: #1f6e68;
+            color: white;
+            text-align: left;
+            padding: 12px;
+        }
+        .table td {
+            border: 2px solid #ddd;
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        /* Общий стиль для карточек */
+        .card {
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fff;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Стиль для кнопки */
+        .btn-success {
+            background-color: #1f6e68;
+            border-color: #1f6e68;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-success:hover {
+            background-color: #155c53;
+            border-color: #155c53;
+            transform: translateY(-2px);
+        }
+        .btn-success:focus {
+            outline: none;
+        }
+
+        /* Стиль для секции с кнопкой */
+        .download-btn-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #fff; /* Заменили на белый фон */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Установили тень, как у других блоков */
+        }
+
+        /* Стиль для заголовков */
+        h1, h2 {
+            font-weight: bold;
+            color: #1f6e68;
+        }
+
+        /* Стиль для ссылок */
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Добавим немного пространства между элементами */
+        .content-preview p {
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock head %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'template-list' %}">Шаблоны</a></li>
+        <li class="active"><strong>{{ object.title }}</strong></li>
+    </ol>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4"><strong>О документе</strong></h1>
+
+        <!-- Таблица с описанием шаблона в карточке -->
+        <div class="card mb-5">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Название</th>
+                            <td>{{ object.title }}</td>
+                        </tr>
+                        <tr>
+                            <th>Описание</th>
+                            <td>{{ object.description|linebreaksbr }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция с кнопкой для скачивания шаблона -->
+        <div class="download-btn-container">
+            <a href="{{ object.file.url }}" class="btn btn-success btn-lg" target="_blank">
+                <i class="fas fa-download"></i> Скачать (docx)
+            </a>
+        </div>
+
+        <!-- Содержимое файла -->
+        <h2 class="mt-6"><strong>Предпросмотр шаблона документа «{{ object.title }}»</strong></h2>
+        <div class="card mt-6">
+            <div class="card-body">
+                <div class="content-preview">
+                    {% for line in preview_content %}
+                        <p class="mb-2">{{ line|linebreaksbr }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

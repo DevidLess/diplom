@@ -1,0 +1,44 @@
+<!-- frontend/site/home.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+    <title>{{ view.title }}</title>
+    <style>
+        .breadcrumb {
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+            padding: 10px;
+        }
+        h1 {
+            color: #1f6e68;
+            font-weight: bold;
+        }
+        .btn-danger {
+            background-color: #ff4d4d; /* Red for delete */
+            border: none;
+            color: white;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+
+    <ol class="breadcrumb">
+        <li><a href="{% url "home" %}">Главная</a></li>
+        <li><a href="{% url "cancellation-request-list" %}">Заявления об отмене судебных приказов</a></li>
+        <li><a href="{% url "cancellation-request-detail" object.id %}">{{ object }}</a></li>
+        <li class="active">{{ view.title }}</li>
+    </ol>
+
+    <h1>{{ view.title }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <p>Удалить "{{ object }}"?</p>
+        <input type="submit" value="Удалить" class="btn btn-danger"/>
+    </form>
+
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% load static %}
+
+<nav class="navbar navbar-inverse" style="background-color: #1f6e68; padding-top: 10px; padding-bottom: 10px;">
+    <div class="container-fluid">
+        <div class="navbar-header d-flex align-items-center" style="display: flex; align-items: center;"> <!-- Flexbox для выравнивания -->
+            <!-- Логотип -->
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}" style="display: flex; align-items: center;">
+                <img alt="Brand" src="{% static 'image/logo.png' %}" style="height: 40px; width: auto; margin-right: 10px;">
+                <span style="color: #fff; font-size: 20px; font-weight: bold;">LessDoc</span>
+            </a>
+        </div>
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}" style="color: #fff;">Главная страница</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lawyers:lawyer_list' %}" style="color: #fff;">Юристы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pages:agencies_list' %}" style="color: #fff;">Государственные органы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'template-list' %}" style="color: #fff;">Шаблоны заявлений</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'court-order-list' %}" style="color: #fff;">Судебные приказы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cancellation-request-list' %}" style="color: #fff;">Заявления об отмене судебных приказов</a>
+                    </li>
+                    {% if request.user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin" style="color: #fff;">Панель администратора</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user-profile-detail' %}" style="color: #fff;">Профиль - {{ request.user.username }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}" style="color: #fff;">Выход</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}" style="color: #fff;">Вход</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

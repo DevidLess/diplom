@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load bootstrap_pagination %}
+
+{% block head %}
+    <title>{{ object }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+{% endblock head %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="{% url "home" %}">Главная</a></li>
+        <li><a href="{% url "court-order-list" %}">Судебный приказ</a></li>
+        <li class="active">{{ object }}</li>
+    </ol>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <h1 class="page-header" style="color: #1f6e68;">{{ object }}</h1>
+
+    <div class="row">
+
+        <div class="col-md-9">
+            {% if request.user.user_type_id == 3 %}
+            {% endif %}
+
+            <table id="w0" class="table table-responsive table-bordered">
+                <tr>
+                    <th>Категория</th>
+                    <td><b>{{ object.category }}</b></td>
+                </tr>
+
+                <tr>
+                    <th>Истец</th>
+                    <td><b>{{ object.claimant }}</b></td>
+                </tr>
+
+                <tr>
+                    <th>Ответчик</th>
+                    <td><b>{{ object.defendant }}</b></td>
+                </tr>
+
+                <tr>
+                    <th>Содержание</th>
+                    <td>{{ object.content | linebreaksbr }}</td>
+                </tr>
+
+                <tr>
+                    <th>Статус</th>
+                    <td><b>{{ object.status }}</b></td>
+                </tr>
+
+                <tr>
+                    <th>Автор</th>
+                    <td><b>{{ object.author }}</b></td>
+                </tr>
+
+            </table>
+
+            <p>
+                <a href="{% url "cancellation-request-create-by-id" object.id %}" class="btn btn-success" style="background-color: #1f6e68; border-color: #1f6e68;">Подать заявление об отмене судебного приказа</a>
+            </p>
+
+            {% if object.courtorderhistory_set.all %}
+                <h3 class="page-header" style="color: #1f6e68;">История статусов</h3>
+                <table class="table table-striped table-bordered">
+                    <colgroup>
+                        <col width="250">
+                        <col width="250">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Пользователь</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in object.courtorderhistory_set.all %}
+                        <tr data-key="{{ object.id }}">
+                            <td>{{ item.registration_date }}</td>
+                            <td>{{ item.status }}</td>
+                            <td>{{ item.user }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+
+            {% if object.category and object.category.templates.all %}
+                <h4 style="color: #1f6e68;">Доступные шаблоны:</h4>
+                <div class="list-group">
+                {% for item in object.category.templates.all %}
+                    <a href="{% url "docx-fill-template-for-court-order" item.id object.id %}" class="list-group-item"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{ item }}</a>
+                {% endfor %}
+                </div>
+
+            {% else %}
+                <div class="bs-callout bs-callout-info">
+                    <h4 style="color: #1f6e68;">
+                        Шаблоны не заданы
+                    </h4>
+                    <p>
+                        Для данной категории судебного приказа не определены шаблоны документов. Формирование документа невозможно.
+                    </p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+    <title>{{ view.title }}</title>
+    <style>
+        /* Основные стили для формы */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f6e68;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .breadcrumb li {
+            font-size: 14px;
+            color: #343a40;
+        }
+
+        .breadcrumb li a {
+            color: #1f6e68;
+            text-decoration: none;
+        }
+
+        .breadcrumb li a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border: 2px solid #1f6e68; /* Рамка вокруг формы */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        button[type="submit"] {
+            background-color: #1f6e68;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #145c56;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            box-shadow: none;
+            border-color: #ddd;
+        }
+
+        .form-control:focus {
+            border-color: #1f6e68;
+            box-shadow: 0 0 5px rgba(31, 110, 104, 0.5);
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ view.title }}</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-success">Сохранить</button>
+        </form>
+    </div>
+{% endblock content %}

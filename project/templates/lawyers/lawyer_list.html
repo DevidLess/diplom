@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}  <!-- Подключаем наш фильтр -->
+
+{% block head %}
+    <title>Список юристов</title>
+    <style>
+        /* Стили для заголовка */
+        h1 {
+            color: #1f6e68;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Стили для хлебных крошек */
+        .breadcrumb {
+            background-color: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #1f6e68;
+            text-decoration: none;
+        }
+
+        .breadcrumb .active {
+            color: #777;
+        }
+
+        /* Стили для карточек */
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .lawyer-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 2px solid #ddd;
+        }
+
+        .lawyer-info {
+            flex: 1;
+        }
+
+        .lawyer-info h3 {
+            color: #1f6e68;
+            margin-bottom: 10px;
+        }
+
+        .lawyer-info p {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        /* Стили для кнопок */
+        .btn-custom {
+            background-color: #1f6e68;
+            border-color: #1f6e68;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #1a5a55;
+            border-color: #1a5a55;
+        }
+
+        /* Стили для сообщений */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-warning {
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+            color: #8a6d3b;
+        }
+
+        /* Стили для звездочек */
+        .stars {
+            color: #ffd700; /* Золотой цвет для звезд */
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+
+        .stars .half-star {
+            position: relative;
+            display: inline-block;
+        }
+
+        .stars .half-star::before {
+            content: '⭐';
+            position: absolute;
+            left: 0;
+            width: 50%;
+            overflow: hidden;
+            color: #ffd700;
+        }
+
+        .stars .half-star::after {
+            content: '☆';
+            position: absolute;
+            right: 0;
+            width: 50%;
+            overflow: hidden;
+            color: #ddd;
+        }
+
+        /* Стили для кнопок сортировки */
+        .sort-links {
+            margin-bottom: 20px;
+        }
+
+        .sort-links a {
+            color: #1f6e68;
+            text-decoration: none;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .sort-links a:hover {
+            text-decoration: underline;
+        }
+
+        .sort-links a.active {
+            color: #1a5a55;
+            text-decoration: underline;
+        }
+    </style>
+{% endblock head %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'home' %}"><strong>Главная</strong></a></li>
+        <li class="active">Список юристов</li>
+    </ol>
+{% endblock breadcrumbs %}
+
+{% block content %}
+    <h1>Список юристов</h1>
+
+    <!-- Кнопки для сортировки -->
+    <div class="sort-links">
+        <span>Сортировать по:</span>
+        <a href="?sort=rating_asc" class="{% if sort_by == 'rating_asc' %}active{% endif %}">Рейтингу (по возрастанию)</a>
+        <a href="?sort=rating_desc" class="{% if sort_by == 'rating_desc' %}active{% endif %}">Рейтингу (по убыванию)</a>
+        <a href="?sort=reviews_asc" class="{% if sort_by == 'reviews_asc' %}active{% endif %}">Количеству отзывов (по возрастанию)</a>
+        <a href="?sort=reviews_desc" class="{% if sort_by == 'reviews_desc' %}active{% endif %}">Количеству отзывов (по убыванию)</a>
+    </div>
+
+    {% if not lawyers %}
+        <!-- Сообщение, если юристов нет -->
+        <div class="alert alert-warning">
+            <h4>Юристов не найдено</h4>
+            <p>В системе пока нет зарегистрированных юристов.</p>
+        </div>
+    {% else %}
+        <!-- Карточки с юристами -->
+        <div class="row">
+            {% for lawyer in lawyers %}
+                <div class="col-md-12">
+                    <a href="{% url 'lawyers:lawyer_detail' lawyer.id %}" class="card">
+                        {% if lawyer.photo %}
+                            <img src="{{ lawyer.photo.url }}" alt="{{ lawyer.name }}" class="lawyer-photo">
+                        {% else %}
+                            <img src="{% static 'profile_images/anonymous-user.png' %}" alt="Анонимный профиль" class="lawyer-photo">
+                        {% endif %}
+                        <div class="lawyer-info">
+                            <h3>{{ lawyer.name }}</h3>
+                            <p><strong>Специализация:</strong> {{ lawyer.specialization }}</p>
+                            <p><strong>Опыт:</strong> {{ lawyer.experience }} лет</p>
+                            <p><strong>Средняя оценка:</strong>
+                                {% if lawyer.avg_rating %}
+                                    <!-- Используем новый фильтр star_list -->
+                                    {{ lawyer.avg_rating|star_list }}
+                                    <!-- Или используем старый фильтр stars -->
+                                    <!-- <div class="stars">{{ lawyer.avg_rating|stars }}</div> -->
+                                    ({{ lawyer.review_count }} отзывов)
+                                {% else %}
+                                    Нет оценок
+                                {% endif %}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock content %}
